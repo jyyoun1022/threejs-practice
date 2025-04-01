@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 // 1. 장면 
 const scene = new THREE.Scene()
 
@@ -21,14 +21,14 @@ const material = new THREE.MeshBasicMaterial(
         opacity: 0.3,
         side: THREE.DoubleSide,
         depthWrite: false
-        
+
     });
 
 const cube = new THREE.Mesh(geometry, material)
 // mesh.position.x = 1.0
 // mesh.position.y = 1.0
 // mesh.position.z = -1.0
-cube.position.set(3.0, 1.0, -2.0)
+cube.position.set(0, 0, 0)
 cube.scale.set(1.8, 1.8, 1.8)
 
 
@@ -51,7 +51,7 @@ cubeGroup.add(cube)
 const edges = new THREE.EdgesGeometry(geometry);
 const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
 const wireFrame = new THREE.LineSegments(edges, lineMaterial)
-wireFrame.position.set(3.0, 1.0, -2.0)
+wireFrame.position.set(0, 0, 0)
 wireFrame.scale.set(1.8, 1.8, 1.8)
 wireFrame.rotation.reorder('YXZ')     // 축 이름은 대분자로 써야함
 wireFrame.rotation.x = Math.PI * 0.25  // x축을 중심으로 45도 회전
@@ -73,7 +73,7 @@ const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 
 // 위와 같이 최초 생성된 카메라, 객체 등은 화면 정 중앙에(0,0,0) 모두 생기므로,
 //  카메라가 물체 안에 들어가게 되어 화면에 객체는 안보이고 검은 색만 보일 수도 있다. 따라서 카메라의 위치를 옮겨 객체와의 거리를 확보해준다.(본 샘플 코드에서는 z축으로 이동)
 
-camera.position.z = 3
+camera.position.set(0, 0, 10);  // 약간 위에서 바라보게 설정
 scene.add(camera)
 
 
@@ -90,15 +90,25 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.render(scene, camera)
 
 
+const controls = new OrbitControls(camera, renderer.domElement)
+controls.enableDamping = true; // 부드러운 감속 효과
+controls.dampingFactor = 0.05;
+controls.screenSpacePanning = false; // 수직 이동 방지
+controls.minDistance = 2; // 줌 최소 거리
+controls.maxDistance = 10; // 줌 최대 거리
+controls.autoRotate = false; // 자동 회전 (원하는 경우 true로 설정)
+controls.enableZoom = true; // 줌 활성화
+
 function animate() {
     requestAnimationFrame(animate);
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
-    wireFrame.rotation.x += 0.01;
-    wireFrame.rotation.y += 0.01;
+    controls.update();
+    // cube.rotation.x += 0.01;
+    // cube.rotation.y += 0.01;
+    // wireFrame.rotation.x += 0.01;
+    // wireFrame.rotation.y += 0.01;
     renderer.render(scene, camera);
-  }
-//   animate();
+}
+  animate();
 
 // 캔버스의 크기와 카메라의 종횡비에 영향을 미치는 기본 sizes 변수의 width값과 height 값을 새로운 창 크기에 맞게 변경해주도록
 // 또한 sizes변수의 값을 바꾼 것과는 별도로, 이에 영향을 받고 있는 다른 요소인 camera의 종횡비(aspect) 또한 수동으로 업데이트시켜 주어야 한다. 

@@ -8,9 +8,25 @@ const scene = new THREE.Scene()
 // 도형정보 담당인 geometry와 색상/ 재질 정보 담당인 material을 각각 생성해준 뒤 mesh에 둘을 갖다 바친다.
 // 완성된 mesh를 scene에 추가해야한다
 const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: 0xff0000 })
+const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 const mesh = new THREE.Mesh(geometry, material)
 scene.add(mesh)
+
+const geometry2 = new THREE.TorusKnotGeometry(10, 3, 100, 16, 2, 1);
+// radius - 도넛 모양의 반경. 기본값 1
+// tube — 큐브의 반경. 기본값 0.4
+
+// tubularSegments — 원둘레(모서리) 분할 면수. 기본값 64
+// radialSegments — 튜브 둘레 분할 면수. 기본값 8
+
+// p — 형상이 회전 대칭 축 주위를 감는 횟수. 기본값 2 -> 긴로프 정리하느라 감아둘 때처럼 감김
+// q — 형상이 도넛 모양 내부의 원 주위를 감는 횟수. 기본값 3 -> 많이 감으면 용수철됨
+
+
+// const material2 = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
+// const torusKnot = new THREE.Mesh( geometry2, material2 );
+// scene.add( torusKnot );
+
 // 3. 카메라
 // 카메라 비율과 캔버스 사이즈를 통합적으로 변경해주기 위해서 size를 별도 변수로 지정한다.
 // Three 모듈에서 사용 가능한 카메라 중 가장 대중적인 PerspectiveCamera를 사용하도록 한다.

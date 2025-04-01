@@ -7,18 +7,29 @@ const scene = new THREE.Scene()
 const axesHelper = new THREE.AxesHelper(1)
 scene.add(axesHelper)
 
+
+const cubeGroup = new THREE.Group()
 // 2. 객체
 // 기본적인 상자 1개를 만들 것이라 Box2.Geometry를 사용
 // 도형정보 담당인 geometry와 색상/ 재질 정보 담당인 material을 각각 생성해준 뒤 mesh에 둘을 갖다 바친다.
 // 완성된 mesh를 scene에 추가해야한다
 const geometry = new THREE.BoxGeometry(1, 1, 1)
-const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
-const mesh = new THREE.Mesh(geometry, material)
+const material = new THREE.MeshBasicMaterial(
+    {
+        color: 0xff0000,
+        transparent: true,
+        opacity: 0.3,
+        side: THREE.DoubleSide,
+        depthWrite: false
+        
+    });
+
+const cube = new THREE.Mesh(geometry, material)
 // mesh.position.x = 1.0
 // mesh.position.y = 1.0
 // mesh.position.z = -1.0
-mesh.position.set(3.0, 1.0, -2.0)
-mesh.scale.set(1.8, 1.8, 1.8)
+cube.position.set(3.0, 1.0, -2.0)
+cube.scale.set(1.8, 1.8, 1.8)
 
 
 
@@ -30,12 +41,24 @@ mesh.scale.set(1.8, 1.8, 1.8)
 // 3) 여러 축 회전시 때 순서는 YXZ
 // 여러 축에 대해 회전을 연달아 할 때, 그 적용순서에 따라서 예상치 못한 결과물이 나올 수 있음
 // 가장 직관적인 순서는 Y -> X -> Z 순서이다.
-mesh.rotation.reorder('YXZ')     // 축 이름은 대분자로 써야함
-mesh.rotation.x = Math.PI * 0.25  // x축을 중심으로 45도 회전
-mesh.rotation.y = Math.PI * 0.25  // y축을 중심으로 45도 회전
+cube.rotation.reorder('YXZ')     // 축 이름은 대분자로 써야함
+cube.rotation.x = Math.PI * 0.25  // x축을 중심으로 45도 회전
+cube.rotation.y = Math.PI * 0.25  // y축을 중심으로 45도 회전
 
+cubeGroup.add(cube)
+// scene.add(cube)
 
-scene.add(mesh)
+const edges = new THREE.EdgesGeometry(geometry);
+const lineMaterial = new THREE.LineBasicMaterial({ color: 0xff0000 });
+const wireFrame = new THREE.LineSegments(edges, lineMaterial)
+wireFrame.position.set(3.0, 1.0, -2.0)
+wireFrame.scale.set(1.8, 1.8, 1.8)
+wireFrame.rotation.reorder('YXZ')     // 축 이름은 대분자로 써야함
+wireFrame.rotation.x = Math.PI * 0.25  // x축을 중심으로 45도 회전
+wireFrame.rotation.y = Math.PI * 0.25  // y축을 중심으로 45도 회전
+cubeGroup.add(wireFrame)
+// scene.add(wireFrame)
+scene.add(cubeGroup);
 
 // console.log( mesh.position.distanceTo( mesh.position ) )
 
@@ -66,6 +89,16 @@ renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.render(scene, camera)
 
+
+function animate() {
+    requestAnimationFrame(animate);
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+    wireFrame.rotation.x += 0.01;
+    wireFrame.rotation.y += 0.01;
+    renderer.render(scene, camera);
+  }
+//   animate();
 
 // 캔버스의 크기와 카메라의 종횡비에 영향을 미치는 기본 sizes 변수의 width값과 height 값을 새로운 창 크기에 맞게 변경해주도록
 // 또한 sizes변수의 값을 바꾼 것과는 별도로, 이에 영향을 받고 있는 다른 요소인 camera의 종횡비(aspect) 또한 수동으로 업데이트시켜 주어야 한다. 

@@ -3,6 +3,10 @@ import * as THREE from 'three'
 // 1. 장면 
 const scene = new THREE.Scene()
 
+
+const axesHelper = new THREE.AxesHelper(1)
+scene.add(axesHelper)
+
 // 2. 객체
 // 기본적인 상자 1개를 만들 것이라 Box2.Geometry를 사용
 // 도형정보 담당인 geometry와 색상/ 재질 정보 담당인 material을 각각 생성해준 뒤 mesh에 둘을 갖다 바친다.
@@ -10,22 +14,30 @@ const scene = new THREE.Scene()
 const geometry = new THREE.BoxGeometry(1, 1, 1)
 const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
 const mesh = new THREE.Mesh(geometry, material)
+// mesh.position.x = 1.0
+// mesh.position.y = 1.0
+// mesh.position.z = -1.0
+mesh.position.set(3.0, 1.0, -2.0)
+mesh.scale.set(1.8, 1.8, 1.8)
+
+
+
+// THREE.js 객체 회전 rotation 주의점
+// 1) 회전값은 라디안
+// - π = 180°를 염두에 두고 회전값을 입력해야 한다.
+// 2) 돌리기 전 축 방향 확인
+// 높이가 y축이고, z는 물체가 가까이 오냐 멀리 가냐에 영향을 미친다(이건 카메라 위치에 따라 다름)
+// 3) 여러 축 회전시 때 순서는 YXZ
+// 여러 축에 대해 회전을 연달아 할 때, 그 적용순서에 따라서 예상치 못한 결과물이 나올 수 있음
+// 가장 직관적인 순서는 Y -> X -> Z 순서이다.
+mesh.rotation.reorder('YXZ')     // 축 이름은 대분자로 써야함
+mesh.rotation.x = Math.PI * 0.25  // x축을 중심으로 45도 회전
+mesh.rotation.y = Math.PI * 0.25  // y축을 중심으로 45도 회전
+
+
 scene.add(mesh)
 
-const geometry2 = new THREE.TorusKnotGeometry(10, 3, 100, 16, 2, 1);
-// radius - 도넛 모양의 반경. 기본값 1
-// tube — 큐브의 반경. 기본값 0.4
-
-// tubularSegments — 원둘레(모서리) 분할 면수. 기본값 64
-// radialSegments — 튜브 둘레 분할 면수. 기본값 8
-
-// p — 형상이 회전 대칭 축 주위를 감는 횟수. 기본값 2 -> 긴로프 정리하느라 감아둘 때처럼 감김
-// q — 형상이 도넛 모양 내부의 원 주위를 감는 횟수. 기본값 3 -> 많이 감으면 용수철됨
-
-
-// const material2 = new THREE.MeshBasicMaterial( { color: 0xffff00 } );
-// const torusKnot = new THREE.Mesh( geometry2, material2 );
-// scene.add( torusKnot );
+// console.log( mesh.position.distanceTo( mesh.position ) )
 
 // 3. 카메라
 // 카메라 비율과 캔버스 사이즈를 통합적으로 변경해주기 위해서 size를 별도 변수로 지정한다.

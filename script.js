@@ -21,7 +21,6 @@ const material = new THREE.MeshBasicMaterial(
         opacity: 0.3,
         side: THREE.DoubleSide,
         depthWrite: false
-
     });
 
 const cube = new THREE.Mesh(geometry, material)
@@ -73,10 +72,12 @@ const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 
 // 위와 같이 최초 생성된 카메라, 객체 등은 화면 정 중앙에(0,0,0) 모두 생기므로,
 //  카메라가 물체 안에 들어가게 되어 화면에 객체는 안보이고 검은 색만 보일 수도 있다. 따라서 카메라의 위치를 옮겨 객체와의 거리를 확보해준다.(본 샘플 코드에서는 z축으로 이동)
 
-camera.position.set(0, 0, 10);  // 약간 위에서 바라보게 설정
+camera.position.set(10, 10, 10);  // 약간 위에서 바라보게 설정
 scene.add(camera)
 
-
+// 빛 추가
+const light = new THREE.AmbientLight(0xffffff, 1);
+scene.add(light);
 // 4. 렌더러
 // 마지막으로 렌더링 모듈인 WebGLRenderer를 사용하기 위해서는 html에 마련해둔 canvas 객체를 가져와야 한다. 여기서는 document.querySelector를 사용하도록 한다.
 // 그리고 renderer의 폭과 높이 사이즈는 카메라 코드 작성시에 생성한 sizes 변수값을 가져와 통일시킨다.
@@ -99,16 +100,56 @@ controls.maxDistance = 10; // 줌 최대 거리
 controls.autoRotate = false; // 자동 회전 (원하는 경우 true로 설정)
 controls.enableZoom = true; // 줌 활성화
 
+
+const xCamera = new THREE.OrthographicCamera(-5, 5, 5, -5, 0.1, 100);
+xCamera.position.set(5, 0, 5);
+xCamera.lookAt(0, 0, 0);
+
+// Y축 정면 카메라
+const yCamera = xCamera.clone();
+yCamera.position.set(1, 1, 0);
+
+// Z축 정면 카메라
+const zCamera = xCamera.clone();
+zCamera.position.set(0, 0, 1);
+
+
+function renderViewForElement(camera, element) {
+    const rect = element.getBoundingClientRect();
+    const canvasRect = renderer.domElement.getBoundingClientRect();
+
+    const left = rect.left - canvasRect.left;
+    const bottom = canvasRect.bottom - rect.bottom;
+    const width = rect.width;
+    const height = rect.height;
+
+    renderer.setViewport(left, bottom, width, height);
+    renderer.setScissor(left, bottom, width, height);
+    renderer.setScissorTest(true);
+    renderer.render(scene, camera);
+}
+
+
+
 function animate() {
     requestAnimationFrame(animate);
     controls.update();
-    // cube.rotation.x += 0.01;
-    // cube.rotation.y += 0.01;
-    // wireFrame.rotation.x += 0.01;
-    // wireFrame.rotation.y += 0.01;
-    renderer.render(scene, camera);
+
+    renderer.setScissorTest(false); // 전체 초기화
+    renderer.clear();
+
+    renderer.setViewport(0, 0, window.innerWidth, window.innerHeight);
+
+    // renderer.render(scene, camera);
+    renderViewForElement(camera, document.getElementById('view1'))
+    renderViewForElement(xCamera, document.getElementById('view2'));
+    renderViewForElement(yCamera, document.getElementById('view3'));
+    renderViewForElement(zCamera, document.getElementById('view4'));
 }
-  animate();
+animate();
+
+
+
 
 // 캔버스의 크기와 카메라의 종횡비에 영향을 미치는 기본 sizes 변수의 width값과 height 값을 새로운 창 크기에 맞게 변경해주도록
 // 또한 sizes변수의 값을 바꾼 것과는 별도로, 이에 영향을 받고 있는 다른 요소인 camera의 종횡비(aspect) 또한 수동으로 업데이트시켜 주어야 한다. 
@@ -137,3 +178,4 @@ window.addEventListener('dblclick', () => {
         document.exitFullscreen()
     }
 })
+

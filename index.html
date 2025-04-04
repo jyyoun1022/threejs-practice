@@ -5,23 +5,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./style.css">
-    <title>Three.js Project</title>
+    <title>3DTool</title>
 </head>
 
 <body>
-    <!-- <div class="container">
-        <canvas class="myCanvas"></canvas>
-        <div class="column">
-            <div id="view1" class="box"></div>
-            <div id="view2" class="box"></div>
+    <div class="topWrap">
+        <ul class="logoWrap">
+            <li>
+                <img src="/logo01.png" alt="">
+            </li>
+            <li>
+                <span></span>
+            </li>
+            <li></li>
+            <li>
+                <button class="changeTool">Change Tool</button>
+            </li>
+        </ul>
+    </div>
+    <div class="mainWrap">
+        <div class="leftWrap">
+
         </div>
-        <div class="column">
-            <div id="view3" class="box"></div>
-            <div id="view4" class="box"></div>
+        <div class="centerWrap">
+            <div class="mainViewWrap">
+                <div class="view1">
+                    <select id="rgbSelect"></select>
+                    <div class="svgWrap">
+                        <canvas id="rgbCanvas"></canvas>
+                        <svg id="svgSpace"></svg>
+                        <img src="" alt="" id="rgbImage">
+                    </div>
+                </div>
+                <div class="view2"></div>
+            </div>
+            <ul class="childViewWrap">
+                <div class="view3"></div>
+                <div class="view4"></div>
+                <div class="view5"></div>
+            </ul>
         </div>
-    </div> -->
+        <div class="rightWrap">
+
+        </div>
+    </div>
+    <div class="footerWrap">
+
+    </div>
 </body>
-<!-- <script type="module" src="./script.js"></script> -->
-<script type="module" src="./sphere.js"></script>
 
 </html>
